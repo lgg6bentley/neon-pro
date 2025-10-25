@@ -24,3 +24,31 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+@keyframes weave {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  50% { transform: translateY(-10px) rotate(5deg); opacity: 0.8; }
+}
+
+.animate-weave {
+  animation: weave 3s ease-in-out infinite;
+}
+
+@keyframes slide-card {
+  0% { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+  50% { transform: translateX(-50%) translateY(0); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+.animate-slide-card {
+  animation: slide-card 2s ease-out forwards;
+}
+
+@keyframes print-line {
+  0% { width: 0; opacity: 0; }
+  50% { width: 50%; opacity: 1; }
+  100% { width: 100%; opacity: 1; }
+}
+
+.animate-print-line {
+  animation: print-line 2s ease-out forwards;
+}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 const crypticMessages = [
   'The marble was never yours.',
@@ -40,6 +41,28 @@ export default function VIPLoungePanel() {
             {msg}
           </p>
         ))}
+      </div>
+
+      {/* VIP Door Icon with Link */}
+      <div className="flex justify-center mt-4">
+        <Link href="/vip-lounge/negotiation">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#FFD700"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="animate-pulse hover:scale-110 transition-transform cursor-pointer"
+          >
+            <rect x="6" y="3" width="12" height="18" rx="2" ry="2" />
+            <circle cx="12" cy="12" r="1.5" fill="#FFD700" />
+            <path d="M12 15v3" />
+          </svg>
+        </Link>
       </div>
     </section>
   )

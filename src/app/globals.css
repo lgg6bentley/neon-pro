@@ -52,3 +52,17 @@ body {
 .animate-print-line {
   animation: print-line 2s ease-out forwards;
 }
+
+@keyframes laugh {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-laugh {
+  animation: laugh 0.6s ease-in-out infinite;
+}
+

@@ -1,6 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+<<<<<<< HEAD
+=======
+import Link from 'next/link'
+>>>>>>> origin/master
 
 const crypticMessages = [
   'The marble was never yours.',
@@ -29,9 +33,15 @@ export default function VIPLoungePanel() {
   }, [])
 
   return (
+<<<<<<< HEAD
     <section className="bg-gray-900 border border-yellow-700 rounded-lg p-4 shadow-lg">
       <h2 className="text-yellow-500 text-xl font-bold mb-4">VIP Lounge</h2>
       <p className="text-gray-400 mb-2">
+=======
+    <section className="panel">
+      <h2 className="text-yellow-500 text-xl font-bold mb-2">VIP Lounge</h2>
+      <p className="text-zinc-400 text-sm mb-2">
+>>>>>>> origin/master
         Stream cryptic commentary and trigger special events.
       </p>
       <div className="bg-black border border-yellow-600 rounded-md p-3 h-40 overflow-y-auto text-yellow-300 text-sm space-y-2">
@@ -41,6 +51,31 @@ export default function VIPLoungePanel() {
           </p>
         ))}
       </div>
+<<<<<<< HEAD
+=======
+
+      {/* VIP Door Icon with Link */}
+      <div className="flex justify-center mt-4">
+        <Link href="/vip-lounge/negotiation">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#FFD700"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="animate-pulse hover:scale-110 transition-transform cursor-pointer"
+          >
+            <rect x="6" y="3" width="12" height="18" rx="2" ry="2" />
+            <circle cx="12" cy="12" r="1.5" fill="#FFD700" />
+            <path d="M12 15v3" />
+          </svg>
+        </Link>
+      </div>
+>>>>>>> origin/master
     </section>
   )
 }

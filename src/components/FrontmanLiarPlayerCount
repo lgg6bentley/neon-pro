@@ -1,0 +1,29 @@
+'use client'; // <-- 🔑 CRITICAL FIX: Marks this as a Client Component
+
+// 🚨 FIX: Must import React hooks (useState, useEffect) when using them in a Client Component
+import React, { useState, useEffect } from 'react'; 
+
+export default function FrontmanLiarPlayerCount() {
+    // Example: Using client-side state
+    const [playerCount, setPlayerCount] = useState(0); 
+
+    useEffect(() => {
+        // Example: Logic to fetch or subscribe to the player count
+        const intervalId = setInterval(() => {
+            // Update count logic
+            // Note: This is placeholder logic; in a real app, this would fetch data
+            setPlayerCount(prev => prev < 100 ? prev + 1 : 100); 
+        }, 5000);
+        
+        return () => clearInterval(intervalId); // Cleanup
+    }, []);
+
+    return (
+        <div className="bg-zinc-800 border-l-4 border-red-500 p-4 shadow-lg rounded-lg transition-all duration-300 hover:shadow-red-500/50">
+            <h4 className="text-sm uppercase text-red-400 font-bold tracking-widest">Total Contestants</h4>
+            <p className="text-5xl font-mono mt-1 text-white tabular-nums tracking-tighter">
+                {playerCount.toString().padStart(3, '0')}
+            </p>
+        </div>
+    );
+}

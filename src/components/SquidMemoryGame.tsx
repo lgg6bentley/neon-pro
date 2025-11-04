@@ -1,109 +1,7 @@
 'use client'; 
 
-import React, { useState, useEffect } from 'react'; 
-
-// --- 0. Utility and Mock Game Components ---
-
-// Mock Game Components
-const SquidMemoryGame = ({ setActiveGame }) => (
-    <div className="h-96 bg-black/50 border border-gray-700 p-8 flex flex-col items-center justify-center text-gray-300">
-        <h3 className="text-xl font-bold mb-4">Squid Memory Match (Simulation)</h3>
-        <p className="text-center">Challenge: Match pairs quickly. The time limit is enforced by the system controller.</p>
-        <button 
-            onClick={() => setActiveGame('ECHO')} 
-            className="mt-6 bg-neon-blue hover:bg-blue-600 text-white py-2 px-6 rounded transition-colors shadow-lg"
-        >
-            Next Game (Echo Chamber)
-        </button>
-    </div>
-);
-const EchoChamberGame = ({ setActiveGame }) => (
-    <div className="h-96 bg-black/50 border border-gray-700 p-8 flex flex-col items-center justify-center text-gray-300">
-        <h3 className="text-xl font-bold mb-4">Echo Chamber Test (Simulation)</h3>
-        <p className="text-center">Challenge: Resist the auditory deception protocol. Failure means disqualification.</p>
-        <button 
-            onClick={() => setActiveGame('BACK')} 
-            className="mt-6 bg-neon-green hover:bg-green-600 text-white py-2 px-6 rounded transition-colors shadow-lg"
-        >
-            Next Game (BackDoor Trial)
-        </button>
-    </div>
-);
-const BackDoorTrialGame = ({ setActiveGame }) => (
-    <div className="h-96 bg-black/50 border border-gray-700 p-8 flex flex-col items-center justify-center text-gray-300">
-        <h3 className="text-xl font-bold mb-4">BackDoor Trial Sequence (Simulation)</h3>
-        <p className="text-center">Challenge: Solve the sequence lock to bypass the main security door. High stakes.</p>
-        <button 
-            onClick={() => setActiveGame('TTOE')} 
-            className="mt-6 bg-neon-pink hover:bg-pink-600 text-white py-2 px-6 rounded transition-colors shadow-lg"
-        >
-            Next Game (Tic Tac Toe)
-        </button>
-    </div>
-);
-const SquidTicTacToe = ({ setActiveGame }) => (
-    <div className="h-96 bg-black/50 border border-gray-700 p-8 flex flex-col items-center justify-center text-gray-300">
-        <h3 className="text-xl font-bold mb-4">Squid Tic Tac Toe (Simulation)</h3>
-        <p className="text-center">Challenge: A simple test of basic strategy. Win or suffer the consequences.</p>
-        <button 
-            onClick={() => setActiveGame('MEM')} 
-            className="mt-6 bg-zinc-600 hover:bg-zinc-500 text-white py-2 px-6 rounded transition-colors shadow-lg"
-        >
-            Restart Cycle (Memory Match)
-        </button>
-    </div>
-);
-
-// Configuration for all games
-const GAME_COMPONENTS = {
-    'MEM': { 
-        title: "Squid Memory Match", 
-        component: SquidMemoryGame, 
-        color: 'text-neon-blue',
-        borderColor: 'border-neon-blue'
-    },
-    'ECHO': { 
-        title: "Echo Chamber Test", 
-        component: EchoChamberGame, 
-        color: 'text-neon-green',
-        borderColor: 'border-neon-green' 
-    },
-    'BACK': { 
-        title: "BackDoor Trial Sequence", 
-        component: BackDoorTrialGame, 
-        color: 'text-neon-pink',
-        borderColor: 'border-neon-pink' 
-    },
-    'TTOE': { 
-        title: "Squid Tic Tac Toe", 
-        component: SquidTicTacToe, 
-        color: 'text-yellow-400',
-        borderColor: 'border-yellow-400' 
-    },
-};
-
-// Component for game selection panel button
-const GameSelectorPanel = ({ gameId, gameConfig, activeGameId, setActiveGameId }) => {
-    const isActive = gameId === activeGameId;
-    const { title, color } = gameConfig;
-
-    return (
-        <button 
-            onClick={() => setActiveGameId(gameId)}
-            className={`
-                p-3 rounded-lg text-center shadow-lg transition duration-300 transform 
-                ${color} ${isActive ? `${gameConfig.borderColor} border-4 scale-105` : 'border border-gray-800 hover:border-gray-600'}
-                bg-gray-900/70 hover:bg-gray-800/90
-            `}
-        >
-            <span className="block text-lg font-bold truncate">{title}</span>
-            <span className={`block text-xs uppercase font-mono ${isActive ? 'text-white' : 'text-zinc-500'}`}>
-                {isActive ? '[ACTIVE]' : '[SELECT]'}
-            </span>
-        </button>
-    );
-};
-
+import React, { useState, useEffect, useRef } from 'react'; 
+import { motion } from 'framer-motion'; // Added Framer Motion import
 
 // --- Core App Component: Switches between Dashboard and Game Arena ---
 
@@ -360,24 +258,194 @@ function CommandCenter({ setView }) {
     )
 }
 
-// --- 3. Game Arena Component (Refactored to be Dynamic) ---
+// --- 3. Game Arena Component ---
+
+// Container component for game panels
+const GamePanel = ({ title, children, color, className = '' }) => (
+    <div className={`bg-gray-900 border-2 border-red-800 rounded-xl p-6 shadow-2xl transition duration-500 ease-in-out hover:border-red-500 ${className}`}>
+        <h2 
+            className={`${color} text-2xl font-extrabold mb-4 uppercase`} 
+            style={{ textShadow: `0 0 8px ${color.includes('pink') ? '#ec4899' : color.includes('blue') ? '#3b82f6' : '#22c55e'}` }}
+        >
+            {title}
+        </h2>
+        {children}
+        <div className="mt-4 text-xs text-gray-500 border-t border-gray-700 pt-3">
+            [ Placeholder: Replace this with your actual game component code. ]
+        </div>
+    </div>
+);
+
+// --- 4. Functional Game Components ---
+
+const symbols = [
+    '◯', '△', '□', '💀', '🎮', '🪙',
+    '🔺', '🟥', '🟢', '👁️', '₩', '🧠',
+]
+
+const generateDeck = () => {
+    const deck = [...symbols, ...symbols]
+    return deck.sort(() => Math.random() - 0.5)
+}
+
+// Functional Squid Memory Game
+function SquidMemoryGame({ activeGame }) {
+    const [deck, setDeck] = useState(generateDeck())
+    const [flipped, setFlipped] = useState([])
+    const [matched, setMatched] = useState([])
+    const [attempts, setAttempts] = useState(0)
+    const [startTime, setStartTime] = useState(null)
+    const [vipMessage, setVipMessage] = useState(null)
+
+    // Note: Audio refs are removed as external assets are not supported.
+
+    useEffect(() => {
+        // Optional: Reset game when the activeGame prop changes
+        if (activeGame === 'memory-match') {
+            handleReset()
+        }
+    }, [activeGame])
+
+    useEffect(() => {
+        if (flipped.length === 2) {
+            const [first, second] = flipped
+            setAttempts(prev => prev + 1)
+
+            if (deck[first] === deck[second]) {
+                setMatched(prev => [...prev, first, second])
+            } else {
+                // Sound effect logic removed
+            }
+
+            setTimeout(() => setFlipped([]), 1000)
+        }
+    }, [flipped, deck])
+
+    useEffect(() => {
+        if (matched.length === deck.length && deck.length > 0) {
+            const duration = ((Date.now() - (startTime ?? Date.now())) / 1000).toFixed(1)
+            setVipMessage(`VIP Alert: All pairs matched in ${attempts} attempts over ${duration} seconds.`)
+
+            // REMOVED: window.location.href = '/counter' to prevent breaking the SPA
+            // The success message will remain until the game is reset.
+        }
+    }, [matched, deck.length, startTime, attempts])
+
+    const handleFlip = (index) => {
+        if (!startTime) {
+            setStartTime(Date.now()); // Start timer on first flip
+        }
+        if (flipped.length < 2 && !flipped.includes(index) && !matched.includes(index)) {
+            setFlipped(prev => [...prev, index])
+        }
+    }
+
+    const handleReset = () => {
+        setDeck(generateDeck())
+        setFlipped([])
+        setMatched([])
+        setAttempts(0)
+        setStartTime(Date.now())
+        setVipMessage(null)
+    }
+
+    return (
+        <section className="bg-gray-900 border border-pink-500 rounded-lg p-4 shadow-lg relative overflow-hidden">
+            <h2 className="text-pink-400 text-xl font-bold mb-2">Squid Memory Match</h2>
+
+            {/* Control Bar */}
+            <div className="flex justify-between items-center mb-4">
+                <div className="text-zinc-400 text-sm font-mono">
+                    Attempts: {attempts} {startTime && `| Time: ${((Date.now() - (startTime ?? Date.now())) / 1000).toFixed(1)}s`}
+                </div>
+                <button
+                    onClick={handleReset}
+                    className="bg-pink-600 hover:bg-pink-700 text-white text-xs px-3 py-1 rounded-md border border-pink-400 transition duration-200"
+                >
+                    Reset Game
+                </button>
+            </div>
+
+            {/* Card Grid */}
+            <div className="relative">
+                <div className="grid grid-cols-6 gap-2 md:gap-4 justify-center">
+                    {deck.map((symbol, idx) => {
+                        const isFlipped = flipped.includes(idx)
+                        const isMatched = matched.includes(idx)
+                        const isDisabled = flipped.length === 2 && !isFlipped;
+
+                        return (
+                            <motion.button
+                                key={idx}
+                                // Ensure only clickable if not matched and not one of the two being checked
+                                disabled={isDisabled || isMatched}
+                                onClick={() => handleFlip(idx)}
+                                initial={{ rotateY: 0 }}
+                                // Set animation key based on flipped/matched status
+                                animate={{ rotateY: isFlipped || isMatched ? 180 : 0 }}
+                                transition={{ duration: 0.4 }}
+                                style={{ transformStyle: 'preserve-3d', backfaceVisibility: 'hidden' }}
+                                className={`h-16 w-full max-w-20 aspect-square text-3xl font-bold rounded-md border perspective cursor-pointer transition-all ${
+                                    isMatched
+                                        ? 'bg-green-700 border-green-500 text-white shadow-green-400/50 shadow-md'
+                                        : isFlipped
+                                        ? 'bg-pink-700 border-pink-500 text-white'
+                                        : 'bg-zinc-800 hover:bg-zinc-700 border-zinc-600 text-zinc-600'
+                                }`}
+                            >
+                                <div className="absolute inset-0 flex items-center justify-center [transform:rotateY(0deg)] backface-hidden">
+                                    {/* Front of the card (Question mark) */}
+                                    {!isFlipped && !isMatched ? '?' : ''}
+                                </div>
+                                <div className="absolute inset-0 flex items-center justify-center [transform:rotateY(180deg)] backface-hidden">
+                                    {/* Back of the card (Symbol) */}
+                                    {isFlipped || isMatched ? symbol : ''}
+                                </div>
+                            </motion.button>
+                        )
+                    })}
+                </div>
+
+                {/* Centered Completion Message */}
+                {matched.length === deck.length && (
+                    <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: [1, 1.05, 1], opacity: 1 }}
+                        transition={{ duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+                        className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
+                    >
+                        <div className="bg-black bg-opacity-90 border-2 border-yellow-500 text-yellow-300 text-2xl md:text-3xl font-bold px-6 py-4 rounded-xl shadow-2xl shadow-yellow-500/50 text-center">
+                            ALL SYMBOLS MATCHED
+                        </div>
+                    </motion.div>
+                )}
+            </div>
+
+            {/* VIP Message */}
+            {vipMessage && (
+                <div className="mt-4 text-yellow-400 text-sm border-t border-yellow-600 pt-2 font-mono">
+                    {vipMessage}
+                </div>
+            )}
+
+        </section>
+    )
+}
+
+// Mock Game Components
+const EchoChamberGame = () => <div className="h-48 bg-black/50 border border-gray-700 flex items-center justify-center text-gray-400">Audio/Input Challenge Simulation</div>;
+const BackDoorTrialGame = () => <div className="h-48 bg-black/50 border border-gray-700 flex items-center justify-center text-gray-400">Complex Trial Logic Simulation</div>;
+const SquidTicTacToe = () => <div className="h-48 bg-black/50 border border-gray-700 flex items-center justify-center text-gray-400">Tic-Tac-Toe Game Board Simulation</div>;
+
 
 function GameArena({ setView }) {
     const [unlocked, setUnlocked] = useState(false);
-    // State to track which game is currently displayed in the main section
-    const [activeGameId, setActiveGameId] = useState('MEM'); // Default to Memory Match
 
     useEffect(() => {
-        // Simulates the 1.5-second 'unlocked' delay
-        const timer = setTimeout(() => setUnlocked(true), 1500); 
+        // Simulates the 3-second 'unlocked' delay
+        const timer = setTimeout(() => setUnlocked(true), 3000);
         return () => clearTimeout(timer);
     }, []);
-
-    // Get configuration for the active game
-    const ActiveGameConfig = GAME_COMPONENTS[activeGameId];
-    const ActiveGameComponent = ActiveGameConfig?.component;
-    const ActiveGameTitle = ActiveGameConfig?.title;
-    const ActiveGameBorder = ActiveGameConfig?.borderColor;
 
     return (
         <>
@@ -396,14 +464,8 @@ function GameArena({ setView }) {
 
                 /* Custom Neon Colors and Animation Simulation */
                 .text-neon-pink { color: #ec4899; } /* Pink-500 */
-                .border-neon-pink { border-color: #ec4899; }
-                .bg-neon-pink { background-color: #ec4899; }
                 .text-neon-blue { color: #3b82f6; } /* Blue-500 */
-                .border-neon-blue { border-color: #3b82f6; }
-                .bg-neon-blue { background-color: #3b82f6; }
                 .text-neon-green { color: #22c55e; } /* Green-500 */
-                .border-neon-green { border-color: #22c55e; }
-                .bg-neon-green { background-color: #22c55e; }
 
                 /* Simulate glowing/pulse effects */
                 @keyframes glow-pulse {
@@ -412,6 +474,14 @@ function GameArena({ setView }) {
                 }
                 .animate-glow-pulse {
                     animation: glow-pulse 2s infinite alternate;
+                }
+                
+                /* 3D Flip Styles for motion components */
+                .perspective {
+                    perspective: 1000px;
+                }
+                .backface-hidden {
+                    backface-visibility: hidden;
                 }
             `}</style>
             
@@ -440,7 +510,7 @@ function GameArena({ setView }) {
                         </div>
                     </div>
                 ) : (
-                    // ✅ Unlocked/Game Arena State (Dynamic Logic)
+                    // Unlocked/Game Arena State
                     <>
                         <header className="text-center space-y-2">
                             <h1 className="text-neon-pink text-4xl font-extrabold" style={{ textShadow: '0 0 10px #ec4899' }}>
@@ -449,37 +519,23 @@ function GameArena({ setView }) {
                             <p className="text-zinc-400 text-sm">LIVE SIMULATIONS. FACTION TRIALS. MASKED CLARITY.</p>
                         </header>
 
-                        {/* 1. PRIMARY ACTIVE GAME DISPLAY (Dynamic based on activeGameId) */}
-                        {/* Replaced motion.section with div for single-file compatibility */}
-                        <div 
-                            key={activeGameId}
-                            className={`bg-gray-900 ${ActiveGameBorder} border-4 rounded-xl p-8 shadow-2xl min-h-[550px] transition-all duration-300`}
-                        >
-                            <h2 
-                                className={`${ActiveGameConfig?.color} text-3xl font-extrabold mb-6 uppercase border-b border-gray-700 pb-3`}
-                                style={{ textShadow: `0 0 10px ${ActiveGameConfig?.borderColor.split('-')[1] === 'pink' ? '#ec4899' : 'rgba(236, 72, 153, 0.7)'}` }}
-                            >
-                                ACTIVE GAME: {ActiveGameTitle}
-                            </h2>
-                            {ActiveGameComponent && (
-                                <ActiveGameComponent 
-                                    activeGame={activeGameId} 
-                                    setActiveGame={setActiveGameId} 
-                                />
-                            )}
-                        </div>
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <GamePanel title="Squid Memory Match" color="text-neon-blue" className="animate-fade-in">
+                                {/* Functional Game Component Replaced Here */}
+                                <SquidMemoryGame activeGame="memory-match" />
+                            </GamePanel>
 
-                        {/* 2. GAME SELECTION PANEL */}
-                        <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {Object.entries(GAME_COMPONENTS).map(([id, config]) => (
-                                <GameSelectorPanel 
-                                    key={id} 
-                                    gameId={id} 
-                                    gameConfig={config} 
-                                    activeGameId={activeGameId} 
-                                    setActiveGameId={setActiveGameId} 
-                                />
-                            ))}
+                            <GamePanel title="Echo Chamber Test" color="text-neon-green" className="animate-fade-in">
+                                <EchoChamberGame />
+                            </GamePanel>
+
+                            <GamePanel title="BackDoor Trial Sequence" color="text-neon-pink" className="md:col-span-2 animate-fade-in">
+                                <BackDoorTrialGame />
+                            </GamePanel>
+
+                            <GamePanel title="Squid Tic Tac Toe" color="text-neon-blue" className="md:col-span-2 animate-fade-in">
+                                <SquidTicTacToe />
+                            </GamePanel>
                         </section>
                     </>
                 )}
